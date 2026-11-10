@@ -2,16 +2,19 @@
   "name": "hanziify",
   "version": "0.1.0",
   "private": true,
+  "type": "module",
   "description": "Traditional to Simplified Chinese conversion for Spotify Desktop",
   "scripts": {
     "build": "node build.mjs",
-    "typecheck": "tsc --noEmit"
+    "typecheck": "tsc --noEmit",
+    "test": "node --test tests/*.test.mjs"
   },
   "dependencies": {
     "opencc-js": "^1.4.2"
   },
   "devDependencies": {
     "esbuild": "^0.28.2",
+    "jsdom": "^31.0.0",
     "typescript": "^7.0.2"
   }
 }
