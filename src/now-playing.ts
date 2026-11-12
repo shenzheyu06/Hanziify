@@ -1,4 +1,4 @@
-import { Converter } from "opencc-js/t2cn";
+import { createTextConverter } from "./text-conversion.ts";
 
 const BAR_SELECTOR = '[data-testid="now-playing-bar"]';
 const TEXT_SELECTOR = [
@@ -16,26 +16,14 @@ export function startNowPlayingConversion(doc: Document): () => void {
   const win = doc.defaultView;
   if (!win) return () => {};
 
-  const convert = Converter({ from: "t", to: "cn" });
-  // Weak keys let Spotify's discarded nodes be garbage-collected.
-  const lastText = new WeakMap<Text, string>();
+  const convertElementText = createTextConverter(doc);
   let frame: number | undefined;
 
   function update() {
     frame = undefined;
     for (const bar of doc.querySelectorAll(BAR_SELECTOR)) {
       for (const element of bar.querySelectorAll(TEXT_SELECTOR)) {
-        const walker = doc.createTreeWalker(element, win!.NodeFilter.SHOW_TEXT);
-        let node: Node | null;
-        while ((node = walker.nextNode())) {
-          const text = node as Text;
-          if (lastText.get(text) === text.data) continue;
-
-          const converted = convert(text.data);
-          // Change only text, preserving links, handlers, and nested markup.
-          if (converted !== text.data) text.data = converted;
-          lastText.set(text, converted);
-        }
+        convertElementText(element);
       }
     }
   }
