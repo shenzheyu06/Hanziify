@@ -1,6 +1,6 @@
 # Hanziify
 
-Hanziify is a Spicetify extension in development for converting Traditional Chinese text to Simplified Chinese in Spotify Desktop. It automatically converts song titles and artist names in the bottom now-playing bar and playlist rows, including updates during track changes, scrolling, and navigation. Album names, search, and sidebar text are not covered yet.
+Hanziify is a Spicetify extension in development for converting Traditional Chinese text to Simplified Chinese in Spotify Desktop. It automatically converts song titles and artist names in the bottom now-playing bar, playlist rows, and the right-hand Now Playing sidebar, including updates during track changes, scrolling, and navigation. Album names, search, lyrics, credits, recommendations, and the left library sidebar are not covered yet.
 
 ## Build locally
 
@@ -36,6 +36,12 @@ After each build, copy `dist/hanziify.js` into the Spicetify Extensions folder a
 2. Switch to another Traditional Chinese track and check that conversion updates automatically.
 3. Try English and already-Simplified titles; they should stay unchanged.
 4. Click the title and artist links, navigate between pages, and use playback controls. Confirm that links and playback still work and that DevTools shows no Hanziify errors.
+
+## Check Now Playing sidebar conversion
+
+Open the right-hand Now Playing sidebar while a Traditional Chinese track is selected. Its current title and artists should convert automatically (for example, `幻聽` and `許嵩` become `幻听` and `许嵩`). Switch tracks, close and reopen the sidebar, and check again. Title and artist links should still work. Lyrics, credits, and recommendations should remain unchanged.
+
+Sidebar selectors are based on the installed Spotify client: `.main-nowPlayingView-contextItemInfo` contains `.main-trackInfo-name`. Other Spotify layouts may require additional selectors; the DOM tests do not replace checking the live app.
 
 ## Check automatic playlist conversion
 

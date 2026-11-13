@@ -1,7 +1,9 @@
 import { startNowPlayingConversion } from "./now-playing";
 import { createPlaylistConverter, startPlaylistConversion } from "./playlist.ts";
+import { startNowPlayingSidebarConversion } from "./now-playing-sidebar.ts";
 
 startNowPlayingConversion(document);
+startNowPlayingSidebarConversion(document);
 const convertVisiblePlaylist = createPlaylistConverter(document);
 startPlaylistConversion(document, convertVisiblePlaylist);
 // Keep the manual command available for diagnostics, using the same cache.
