@@ -1,4 +1,5 @@
 import { createTextConverter } from "./text-conversion.ts";
+import { observeChanges } from "./observe-changes.ts";
 
 const PLAYLIST_SELECTOR = '.playlist-playlist-page';
 const TITLE_CELL_SELECTOR = '[role="gridcell"][aria-colindex="2"]';
@@ -36,7 +37,6 @@ export function startPlaylistConversion(
 ): () => void {
   const win = doc.defaultView;
   if (!win) return () => {};
-  let frame: number | undefined;
 
   function affectsPlaylist(record: MutationRecord): boolean {
     const element = record.target.nodeType === win!.Node.ELEMENT_NODE
@@ -52,17 +52,7 @@ export function startPlaylistConversion(
     });
   }
 
-  const observer = new win.MutationObserver((records) => {
-    if (frame === undefined && records.some(affectsPlaylist)) {
-      // Several row changes during scrolling share a single conversion pass.
-      frame = win.requestAnimationFrame(() => {
-        frame = undefined;
-        convertVisiblePlaylist();
-      });
-    }
-  });
-
-  observer.observe(doc.documentElement, {
+  return observeChanges(doc, affectsPlaylist, convertVisiblePlaylist, {
     childList: true,
     characterData: true,
     subtree: true,
@@ -70,10 +60,4 @@ export function startPlaylistConversion(
     attributes: true,
     attributeFilter: ["class", "role", "aria-colindex", "href"],
   });
-  convertVisiblePlaylist();
-
-  return () => {
-    observer.disconnect();
-    if (frame !== undefined) win.cancelAnimationFrame(frame);
-  };
 }

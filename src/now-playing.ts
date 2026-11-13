@@ -1,4 +1,5 @@
 import { createTextConverter } from "./text-conversion.ts";
+import { observeChanges } from "./observe-changes.ts";
 
 const BAR_SELECTOR = '[data-testid="now-playing-bar"]';
 const TEXT_SELECTOR = [
@@ -17,10 +18,8 @@ export function startNowPlayingConversion(doc: Document): () => void {
   if (!win) return () => {};
 
   const convertElementText = createTextConverter(doc);
-  let frame: number | undefined;
 
   function update() {
-    frame = undefined;
     for (const bar of doc.querySelectorAll(BAR_SELECTOR)) {
       for (const element of bar.querySelectorAll(TEXT_SELECTOR)) {
         convertElementText(element);
@@ -42,17 +41,5 @@ export function startNowPlayingConversion(doc: Document): () => void {
     });
   }
 
-  const observer = new win.MutationObserver((records) => {
-    if (frame === undefined && records.some(affectsBar)) {
-      frame = win.requestAnimationFrame(update);
-    }
-  });
-
-  observer.observe(doc.documentElement, { childList: true, characterData: true, subtree: true });
-  update();
-
-  return () => {
-    observer.disconnect();
-    if (frame !== undefined) win.cancelAnimationFrame(frame);
-  };
+  return observeChanges(doc, affectsBar, update);
 }
