@@ -1,9 +1,11 @@
 import { startNowPlayingConversion } from "./now-playing";
-import { createPlaylistConverter } from "./playlist.ts";
+import { createPlaylistConverter, startPlaylistConversion } from "./playlist.ts";
 
 startNowPlayingConversion(document);
-// Run Hanziify.convertVisiblePlaylist() in DevTools after opening a playlist.
+const convertVisiblePlaylist = createPlaylistConverter(document);
+startPlaylistConversion(document, convertVisiblePlaylist);
+// Keep the manual command available for diagnostics, using the same cache.
 Object.assign(window, {
-  Hanziify: { convertVisiblePlaylist: createPlaylistConverter(document) },
+  Hanziify: { convertVisiblePlaylist },
 });
 console.info("Hanziify loaded successfully!");

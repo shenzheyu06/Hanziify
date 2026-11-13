@@ -1,7 +1,7 @@
 import assert from "node:assert/strict";
 import { test } from "node:test";
 import { JSDOM } from "jsdom";
-import { createPlaylistConverter } from "../src/playlist.ts";
+import { createPlaylistConverter, startPlaylistConversion } from "../src/playlist.ts";
 
 // Semantic row/cell markup and the title class used by Spotify's track list.
 const row = `
@@ -19,11 +19,93 @@ const row = `
   </div>`;
 
 function setup(t, html) {
-  const dom = new JSDOM(html);
+  const dom = new JSDOM(html, { pretendToBeVisual: true });
   t.after(() => dom.window.close());
   const doc = dom.window.document;
   return { doc, convert: createPlaylistConverter(doc) };
 }
+
+const settle = () => new Promise(resolve => setTimeout(resolve, 80));
+
+function startAutomatic(t, html) {
+  const context = setup(t, html);
+  const stop = startPlaylistConversion(context.doc, context.convert);
+  t.after(stop);
+  return { ...context, stop };
+}
+
+test("automatically converts initial rows and rows added by scrolling", async (t) => {
+  const { doc } = startAutomatic(t, `<section class="playlist-playlist-page">${row}</section>`);
+  assert.equal(doc.querySelector('a[href^="/track/"]').textContent, "爱情转移");
+  doc.querySelector("section").insertAdjacentHTML("beforeend", row);
+  await settle();
+  assert.deepEqual([...doc.querySelectorAll('a[href^="/track/"]')].map(a => a.textContent), ["爱情转移", "爱情转移"]);
+});
+
+test("handles delayed playlist loading and navigation away and back", async (t) => {
+  const { doc } = startAutomatic(t, "<main></main>");
+  const main = doc.querySelector("main");
+  main.innerHTML = `<div><section class="playlist-playlist-page">${row}</section></div>`;
+  await settle();
+  assert.equal(main.querySelector('a[href^="/artist/"]').textContent, "陈奕迅");
+  main.innerHTML = `<section class="album-page">${row}</section>`;
+  await settle();
+  assert.equal(main.querySelector('a[href^="/track/"]').textContent, "愛情轉移");
+  main.innerHTML = `<section class="playlist-playlist-page">${row}</section>`;
+  await settle();
+  assert.equal(main.querySelector('a[href^="/track/"]').textContent, "爱情转移");
+});
+
+test("converts reused text nodes and delayed artist names without an update loop", async (t) => {
+  const { doc } = startAutomatic(t, `<section class="playlist-playlist-page">${row}</section>`);
+  const title = doc.querySelector('a[href^="/track/"] div');
+  const artist = doc.querySelector('a[href^="/artist/"] span');
+  title.firstChild.data = "幻聽";
+  artist.textContent = "English Artist";
+  await settle();
+  assert.equal(title.textContent, "幻听");
+  assert.equal(artist.textContent, "English Artist");
+  artist.textContent = "許嵩";
+  await settle();
+  assert.equal(artist.textContent, "许嵩");
+
+  let mutations = 0;
+  const observer = new doc.defaultView.MutationObserver(records => { mutations += records.length; });
+  observer.observe(doc.body, { childList: true, characterData: true, subtree: true });
+  t.after(() => observer.disconnect());
+  await settle();
+  assert.equal(mutations, 0);
+});
+
+test("handles selectors assigned after content is rendered", async (t) => {
+  const { doc } = startAutomatic(t, `<section>${row}</section>`);
+  doc.querySelector("section").className = "playlist-playlist-page";
+  await settle();
+  assert.equal(doc.querySelector('a[href^="/track/"]').textContent, "爱情转移");
+});
+
+test("ignores unrelated changes and cancels pending conversion on cleanup", async (t) => {
+  const { doc, convert } = setup(t, `<aside></aside><section class="playlist-playlist-page">${row}</section>`);
+  let passes = 0;
+  const stop = startPlaylistConversion(doc, () => { passes++; return convert(); });
+  t.after(stop);
+  await settle();
+  const before = passes;
+  doc.querySelector("aside").textContent = "音樂";
+  await settle();
+  assert.equal(passes, before);
+  const title = doc.querySelector('a[href^="/track/"] div');
+  title.textContent = "幻聽";
+  // Deliver the mutation so a frame is pending, then cancel it.
+  await Promise.resolve();
+  stop();
+  await settle();
+  assert.equal(title.textContent, "幻聽");
+  assert.equal(passes, before);
+  title.textContent = "愛我別走";
+  await settle();
+  assert.equal(title.textContent, "愛我別走");
+});
 
 test("converts playlist titles and all artists, preserving links and other content", (t) => {
   const { doc, convert } = setup(t, `<section class="playlist-playlist-page">${row}</section><aside>${row}</aside>`);
