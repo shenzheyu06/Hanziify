@@ -1,6 +1,6 @@
 # Hanziify
 
-Hanziify is a Spicetify extension in development for converting Traditional Chinese text to Simplified Chinese in Spotify Desktop. It automatically converts song titles and artist names in the bottom now-playing bar, playlist rows, and the right-hand Now Playing sidebar, including updates during track changes, scrolling, and navigation. Album links in playlist rows are also converted. Dedicated album pages, search, lyrics, credits, recommendations, and the left library sidebar are not covered yet.
+Hanziify is a Spicetify extension in development for converting Traditional Chinese text to Simplified Chinese in Spotify Desktop. It automatically converts song titles and artist names in the bottom now-playing bar, playlist rows, and the right-hand Now Playing sidebar, including updates during track changes, scrolling, and navigation. Album links in playlist rows and lyric lines in the lyrics view and sidebar preview are also converted. Dedicated album pages, search, credits, recommendations, and the left library sidebar are not covered yet.
 
 ## Build locally
 
@@ -39,9 +39,15 @@ After each build, copy `dist/hanziify.js` into the Spicetify Extensions folder a
 
 ## Check Now Playing sidebar conversion
 
-Open the right-hand Now Playing sidebar while a Traditional Chinese track is selected. Its current title and artists should convert automatically (for example, `幻聽` and `許嵩` become `幻听` and `许嵩`). Switch tracks, close and reopen the sidebar, and check again. Title and artist links should still work. Lyrics, credits, and recommendations should remain unchanged.
+Open the right-hand Now Playing sidebar while a Traditional Chinese track is selected. Its current title and artists should convert automatically (for example, `幻聽` and `許嵩` become `幻听` and `许嵩`). Switch tracks, close and reopen the sidebar, and check again. Title and artist links should still work. Credits and recommendations should remain unchanged. Lyrics are converted separately.
 
 Sidebar selectors are based on the installed Spotify client: `.main-nowPlayingView-contextItemInfo` contains `.main-trackInfo-name`. Other Spotify layouts may require additional selectors; the DOM tests do not replace checking the live app.
+
+## Check lyric conversion
+
+Open the lyrics view and the sidebar lyrics preview for a track with Traditional Chinese lyrics. Check that lines convert, including after switching tracks or closing and reopening the view. Verify synchronized highlighting and click-to-seek still work where Spotify supports them. Provider credits and controls should stay unchanged. English text stays English; any Chinese translation text within a lyric line is also simplified.
+
+The lyric selector supports `data-testid="lyrics-line"` and the installed client's generated line class `J4_kkGYm5hjbZlztykxr`. That class may change after a Spotify update; live verification is needed for other client versions. Conversion only processes lyrics Spotify has already displayed.
 
 ## Check automatic playlist conversion
 
