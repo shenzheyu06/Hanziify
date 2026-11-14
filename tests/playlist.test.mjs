@@ -40,6 +40,7 @@ test("automatically converts initial rows and rows added by scrolling", async (t
   doc.querySelector("section").insertAdjacentHTML("beforeend", row);
   await settle();
   assert.deepEqual([...doc.querySelectorAll('a[href^="/track/"]')].map(a => a.textContent), ["爱情转移", "爱情转移"]);
+  assert.deepEqual([...doc.querySelectorAll('a[href^="/album/"]')].map(a => a.textContent), ["认了吧", "认了吧"]);
 });
 
 test("handles delayed playlist loading and navigation away and back", async (t) => {
@@ -107,7 +108,7 @@ test("ignores unrelated changes and cancels pending conversion on cleanup", asyn
   assert.equal(title.textContent, "愛我別走");
 });
 
-test("converts playlist titles and all artists, preserving links and other content", (t) => {
+test("converts playlist titles, artists, and albums, preserving links and other content", (t) => {
   const { doc, convert } = setup(t, `<section class="playlist-playlist-page">${row}</section><aside>${row}</aside>`);
   const title = doc.querySelector('a[href="/track/1"]');
   let clicks = 0;
@@ -115,12 +116,34 @@ test("converts playlist titles and all artists, preserving links and other conte
   assert.equal(convert(), 1);
   assert.equal(title.textContent, "爱情转移");
   assert.deepEqual([...doc.querySelectorAll('section a[href^="/artist/"]')].map(a => a.textContent), ["陈奕迅", "张学友"]);
-  assert.equal(doc.querySelector('section a[href^="/album/"]').textContent, "認了吧");
+  assert.equal(doc.querySelector('section a[href^="/album/"]').textContent, "认了吧");
+  assert.equal(doc.querySelector('aside a[href^="/album/"]').textContent, "認了吧");
   assert.equal(doc.querySelector(".badge").textContent, "音樂影片");
   assert.equal(doc.querySelector('aside a[href^="/track/"]').textContent, "愛情轉移");
   assert.equal(doc.querySelector('a[href="/track/1"]'), title);
   title.click();
   assert.equal(clicks, 1);
+});
+
+test("converts reused album text and preserves album links in a different column", async (t) => {
+  const { doc } = startAutomatic(t, `<section class="playlist-playlist-page">${row.replace('aria-colindex="3"', 'aria-colindex="4"')}</section>`);
+  const album = doc.querySelector('a[href^="/album/"]');
+  let clicks = 0;
+  album.addEventListener("click", event => { event.preventDefault(); clicks++; });
+  assert.equal(album.textContent, "认了吧");
+  album.firstChild.firstChild.data = "夢遊計";
+  await settle();
+  assert.equal(album.textContent, "梦游计");
+  assert.equal(doc.querySelector('a[href^="/album/"]'), album);
+  assert.equal(album.getAttribute("href"), "/album/1");
+  album.click();
+  assert.equal(clicks, 1);
+  album.textContent = "English Album";
+  await settle();
+  assert.equal(album.textContent, "English Album");
+  album.textContent = "音乐";
+  await settle();
+  assert.equal(album.textContent, "音乐");
 });
 
 test("handles unlinked titles, headers, English text, and repeated manual passes", (t) => {

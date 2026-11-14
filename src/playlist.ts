@@ -24,6 +24,10 @@ export function createPlaylistConverter(doc: Document): () => number {
         for (const artist of cell.querySelectorAll('a[href^="/artist/"]')) {
           convertElementText(artist);
         }
+        // Find albums by link destination rather than a fixed column number.
+        for (const album of row.querySelectorAll('[role="gridcell"] a[href^="/album/"]')) {
+          convertElementText(album);
+        }
         rowsConverted++;
       }
     }

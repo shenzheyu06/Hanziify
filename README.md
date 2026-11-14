@@ -1,6 +1,6 @@
 # Hanziify
 
-Hanziify is a Spicetify extension in development for converting Traditional Chinese text to Simplified Chinese in Spotify Desktop. It automatically converts song titles and artist names in the bottom now-playing bar, playlist rows, and the right-hand Now Playing sidebar, including updates during track changes, scrolling, and navigation. Album names, search, lyrics, credits, recommendations, and the left library sidebar are not covered yet.
+Hanziify is a Spicetify extension in development for converting Traditional Chinese text to Simplified Chinese in Spotify Desktop. It automatically converts song titles and artist names in the bottom now-playing bar, playlist rows, and the right-hand Now Playing sidebar, including updates during track changes, scrolling, and navigation. Album links in playlist rows are also converted. Dedicated album pages, search, lyrics, credits, recommendations, and the left library sidebar are not covered yet.
 
 ## Build locally
 
@@ -46,9 +46,9 @@ Sidebar selectors are based on the installed Spotify client: `.main-nowPlayingVi
 ## Check automatic playlist conversion
 
 1. Open a playlist containing Traditional Chinese titles or artists. For example, `愛情轉移` and `陳奕迅` should become `爱情转移` and `陈奕迅` automatically.
-2. Scroll down to load more rows, then back up. Newly rendered titles and artists should convert too.
+2. Scroll down to load more rows, then back up. Newly rendered titles, artists, and album names should convert too.
 3. Navigate to a different playlist and back. Check conversion after each page loads.
-4. Check that title and artist links still work, and album names stay unchanged. English names remain English; this extension does not translate them into Chinese.
+4. Check that album names also convert (for example, `認了吧` becomes `认了吧`) and that title, artist, and album links still work. English names remain English; this extension does not translate them into Chinese. Rows without an album link are supported, but unlinked album text is not converted.
 
 For troubleshooting, this manual command remains available in the Spotify DevTools Console:
 
