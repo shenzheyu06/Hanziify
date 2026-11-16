@@ -1,6 +1,6 @@
 # Hanziify
 
-Hanziify is a Spicetify extension in development for converting Traditional Chinese text to Simplified Chinese in Spotify Desktop. It automatically converts song titles and artist names in the bottom now-playing bar, playlist rows, and the right-hand Now Playing sidebar, including updates during track changes, scrolling, and navigation. Album links in playlist rows and lyric lines in the lyrics view and sidebar preview are also converted. Dedicated album pages, search, credits, recommendations, and the left library sidebar are not covered yet.
+Hanziify is a Spicetify extension in development for converting Traditional Chinese text to Simplified Chinese in Spotify Desktop. It automatically converts song titles and artist names in the bottom now-playing bar, playlist rows, and the right-hand Now Playing sidebar, including updates during track changes, scrolling, and navigation. Album links in playlist rows and lyric lines in the lyrics view and sidebar preview are also converted. Dedicated album pages also support album headings, artist links, and track titles. Search, credits, recommendation titles, and the left library sidebar are not covered yet.
 
 ## Build locally
 
@@ -48,6 +48,12 @@ Sidebar selectors are based on the installed Spotify client: `.main-nowPlayingVi
 Open the lyrics view and the sidebar lyrics preview for a track with Traditional Chinese lyrics. Check that lines convert, including after switching tracks or closing and reopening the view. Verify synchronized highlighting and click-to-seek still work where Spotify supports them. Provider credits and controls should stay unchanged. English text stays English; any Chinese translation text within a lyric line is also simplified.
 
 The lyric selector supports `data-testid="lyrics-line"` and the installed client's generated line class `J4_kkGYm5hjbZlztykxr`. That class may change after a Spotify update; live verification is needed for other client versions. Conversion only processes lyrics Spotify has already displayed.
+
+## Check album-page conversion
+
+Open a Traditional Chinese album. Check its main heading, artist links, and track titles, including after navigating to another album and back or scrolling to load more tracks. Click artist and track links to verify navigation still works. English text stays English; controls, copyright text, and other section headings are unchanged.
+
+Album conversion is scoped to `[data-testid="album-page"]`, using the main `h1`, `/artist/` links, and title cells in track rows. Artist links anywhere within that page are converted; recommendation titles are not. Other Spotify layouts may require selector updates. Verify in the live app after installing the build.
 
 ## Check automatic playlist conversion
 
