@@ -3,6 +3,7 @@ import { createPlaylistConverter, startPlaylistConversion } from "./playlist.ts"
 import { startNowPlayingSidebarConversion } from "./now-playing-sidebar.ts";
 import { startLyricsConversion } from "./lyrics.ts";
 import { startAlbumConversion } from "./album.ts";
+import { startArtistConversion } from "./artist.ts";
 import { startSearchConversion } from "./search.ts";
 import { startSearchPreviewConversion } from "./search-preview.ts";
 import { startLibraryConversion } from "./library.ts";
@@ -11,6 +12,7 @@ startNowPlayingConversion(document);
 startNowPlayingSidebarConversion(document);
 startLyricsConversion(document);
 startAlbumConversion(document);
+startArtistConversion(document);
 startSearchConversion(document);
 startSearchPreviewConversion(document);
 startLibraryConversion(document);
