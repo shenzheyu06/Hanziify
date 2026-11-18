@@ -5,6 +5,9 @@ const SEARCH_SELECTOR = "#searchPage";
 const TEXT_SELECTOR = [
   'a[href^="/track/"]',
   'a[href^="/artist/"]',
+  // Album/playlist title links in cards, top results, and song-list columns.
+  'a[href^="/album/"]',
+  'a[href^="/playlist/"]',
   // Compact and full song lists can put the title in different columns.
   // Find the cell with artist links, rather than relying on its column number.
   '[role="row"] [role="gridcell"]:has(a[href^="/artist/"]) div.standalone-ellipsis-one-line',

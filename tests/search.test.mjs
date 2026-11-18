@@ -24,17 +24,50 @@ function setup(t, html) {
   return { doc, stop };
 }
 
-test("converts full search songs and artists but excludes preview and other titles", (t) => {
+test("converts full search names but excludes preview and interface text", (t) => {
   const { doc } = setup(t, `${results}<div role="listbox"><a href="/track/2">預覽歌曲</a><a href="/artist/3">預覽藝術家</a></div><input value="原始搜尋">`);
   assert.equal(doc.querySelector('[role="gridcell"] > div').textContent, "测试歌曲");
   assert.equal(doc.querySelector('a[href="/artist/1"]').textContent, "测试歌手");
   assert.equal(doc.querySelector('a[href="/artist/2"]').textContent, "另一位艺术家");
   assert.equal(doc.querySelector('a[href="/track/1"]').textContent, "另一首测试");
-  assert.equal(doc.querySelector('a[href="/album/1"]').textContent, "測試專輯");
-  assert.equal(doc.querySelector('a[href="/playlist/1"]').textContent, "測試歌單");
+  assert.equal(doc.querySelector('a[href="/album/1"]').textContent, "测试专辑");
+  assert.equal(doc.querySelector('a[href="/playlist/1"]').textContent, "测试歌单");
   assert.equal(doc.querySelector('h2').textContent, "搜尋結果");
   assert.equal(doc.querySelector('[role="listbox"]').textContent, "預覽歌曲預覽藝術家");
   assert.equal(doc.querySelector('input').value, "原始搜尋");
+});
+
+test("converts album and playlist cards through updates while preserving links and descriptions", async (t) => {
+  const { doc } = setup(t, `<main id="searchPage"></main>
+    <div role="listbox"><a href="/album/preview">預覽專輯</a><a href="/playlist/preview">預覽歌單</a></div>`);
+  const main = doc.querySelector('main');
+  main.innerHTML = `<article><a href="/album/card"><span>測試專輯</span></a><p>專輯介紹</p></article>
+    <article><a href="/playlist/card"><span>測試歌單</span></a><p>歌單介紹</p></article>`;
+  await settle();
+  const album = main.querySelector('a[href^="/album/"]');
+  const playlist = main.querySelector('a[href^="/playlist/"]');
+  assert.equal(album.textContent, "测试专辑");
+  assert.equal(playlist.textContent, "测试歌单");
+  let clicks = 0;
+  for (const link of [album, playlist]) {
+    link.addEventListener('click', e => { e.preventDefault(); clicks++; });
+    link.click();
+  }
+  assert.equal(clicks, 2);
+  album.firstChild.firstChild.data = "新的專輯";
+  playlist.firstChild.textContent = "新的歌單";
+  await settle();
+  assert.equal(album.textContent, "新的专辑");
+  assert.equal(playlist.textContent, "新的歌单");
+  assert.equal(main.querySelector('a[href="/album/card"]'), album);
+  assert.equal(main.querySelector('a[href="/playlist/card"]'), playlist);
+  assert.deepEqual([...main.querySelectorAll('p')].map(p => p.textContent), ["專輯介紹", "歌單介紹"]);
+  assert.equal(doc.querySelector('[role="listbox"]').textContent, "預覽專輯預覽歌單");
+  album.textContent = "English Album";
+  playlist.textContent = "简体歌单";
+  await settle();
+  assert.equal(album.textContent, "English Album");
+  assert.equal(playlist.textContent, "简体歌单");
 });
 
 test("handles late results, changed queries, more rows, and returning to search", async (t) => {
