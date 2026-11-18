@@ -4,12 +4,14 @@ import { startNowPlayingSidebarConversion } from "./now-playing-sidebar.ts";
 import { startLyricsConversion } from "./lyrics.ts";
 import { startAlbumConversion } from "./album.ts";
 import { startSearchConversion } from "./search.ts";
+import { startSearchPreviewConversion } from "./search-preview.ts";
 
 startNowPlayingConversion(document);
 startNowPlayingSidebarConversion(document);
 startLyricsConversion(document);
 startAlbumConversion(document);
 startSearchConversion(document);
+startSearchPreviewConversion(document);
 const convertVisiblePlaylist = createPlaylistConverter(document);
 startPlaylistConversion(document, convertVisiblePlaylist);
 // Keep the manual command available for diagnostics, using the same cache.

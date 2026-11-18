@@ -1,6 +1,6 @@
 # Hanziify
 
-Hanziify is a Spicetify extension in development for converting Traditional Chinese text to Simplified Chinese in Spotify Desktop. It automatically converts song titles and artist names in the bottom now-playing bar, playlist rows, and the right-hand Now Playing sidebar, including updates during track changes, scrolling, and navigation. Album links in playlist rows and lyric lines in the lyrics view and sidebar preview are also converted. Dedicated album pages also support album headings, artist links, and track titles. Full search results support song, artist, album, and playlist names. The typing preview, credits, recommendation titles, and the left library sidebar are not covered yet.
+Hanziify is a Spicetify extension in development for converting Traditional Chinese text to Simplified Chinese in Spotify Desktop. It automatically converts song titles and artist names in the bottom now-playing bar, playlist rows, and the right-hand Now Playing sidebar, including updates during track changes, scrolling, and navigation. Album links in playlist rows and lyric lines in the lyrics view and sidebar preview are also converted. Dedicated album pages also support album headings, artist links, and track titles. Full search results support song, artist, album, and playlist names. The typing preview also converts supported result names and creator subtitles. Credits, recommendation titles, and the left library sidebar are not covered yet.
 
 ## Build locally
 
@@ -57,9 +57,15 @@ Album conversion is scoped to `[data-testid="album-page"]`, using the main `h1`,
 
 ## Check full search-results conversion
 
-Enter a query and open the full results page. Check song titles, artist names, album titles, and playlist titles in the results and their category filters. Change the query, load more results, and navigate away and back. Links should still work; the search input, typing preview, descriptions, and interface labels should stay unchanged. English names remain English.
+Enter a query and open the full results page. Check song titles, artist names, album titles, and playlist titles in the results and their category filters. Change the query, load more results, and navigate away and back. Links should still work; the search input, descriptions, and interface labels should stay unchanged. English names remain English.
 
 Search conversion is scoped to Spotify's `#searchPage` container. It matches song, artist, album, and playlist links, plus unlinked track-row titles in cells containing artist links. This includes album links in song rows as well as title links in cards. For example, `測試專輯` and `測試歌單` should become `测试专辑` and `测试歌单`. As with other areas, different client markup may need selector updates; verify the installed build in Spotify.
+
+## Check search preview conversion
+
+Type a query without pressing Enter. Song, artist, album, and playlist result names in the dropdown should simplify, along with their creator subtitles. Change the query, close and reopen the dropdown, and check newly loaded results. Verify clicking a result and selecting it with the arrow keys and Enter still work. The typed query, query-suggestion text, type labels, and buttons should stay unchanged. This changes display text only, not Spotify's search matching.
+
+The preview uses `#search-dropdown` and entity links. Creator subtitles use the installed client's generated class `kLNNFB6XpG6NJxfzpgre`, which may need updating after a Spotify update. Separate recent-search dropdown layouts are not covered by this selector.
 
 ## Check automatic playlist conversion
 
