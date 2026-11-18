@@ -4,11 +4,17 @@ import { startScopedConversion } from "./scoped-conversion.ts";
 const ARTIST_HEADING = '.main-entityHeader-headerText :is([data-testid="entityTitle"], [data-testid="adaptiveEntityTitle"])';
 // This wrapper identifies the Popular section in the installed Spotify client.
 const POPULAR_TRACK_TITLE = '.AN_Jg5L5weM0cDia6BJV [role="row"] .main-trackList-rowMainContentTitle';
+const DISCOGRAPHY_TITLES = [
+  // The overview shares its shelf class with other sections. Match its release filters.
+  '.p4Oms7ggaeACcjYs6bR3:has(.Uy5TsJiNi39iCvWp83Ws) a.main-card-cardTitleLink',
+  '.artist-artistDiscography-cardGrid a.main-card-cardTitleLink',
+  '.artist-artistDiscography-headerTitle > a',
+];
 
 export function startArtistConversion(doc: Document): () => void {
   return startScopedConversion(doc, {
     rootSelector: '[data-testid="artist-page"]',
-    textSelector: `${ARTIST_HEADING}, ${POPULAR_TRACK_TITLE}`,
+    textSelector: [ARTIST_HEADING, POPULAR_TRACK_TITLE, ...DISCOGRAPHY_TITLES].join(","),
     attributeFilter: ["data-testid", "class", "role"],
   });
 }

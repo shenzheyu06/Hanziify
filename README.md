@@ -59,6 +59,8 @@ Album conversion is scoped to `[data-testid="album-page"]`, using the main `h1`,
 
 Open an artist whose name or Popular tracks contain Traditional Chinese. Check that the artist heading and track titles simplify. Use Show more to reveal additional tracks, then open another artist and check again. The Popular section uses a generated class from the installed Spotify client, so verify it on each client version you use.
 
+In Discography, try the release filters, then open See all and switch between grid and list. Release titles should simplify, including more releases loaded as you scroll. Click a release title to verify navigation. The overview shelf uses generated classes from the installed Spotify client.
+
 ## Check full search-results conversion
 
 Enter a query and open the full results page. Check song titles, artist names, album titles, and playlist titles in the results and their category filters. Change the query, load more results, and navigate away and back. Links should still work; the search input, descriptions, and interface labels should stay unchanged. English names remain English.
@@ -98,6 +100,5 @@ Library conversion uses `.main-yourLibraryX-libraryItemContainer`, list-title ID
 
 ## Future work
 
-- Convert discography album titles on artist pages.
 - Match both Traditional and Simplified Chinese in playlist search.
 - Convert the artist and track title shown above Spotify’s Windows taskbar thumbnail preview. Check whether Spicetify can update that window title.
