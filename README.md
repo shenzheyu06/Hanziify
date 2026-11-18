@@ -1,6 +1,6 @@
 # Hanziify
 
-Hanziify is a Spicetify extension in development for converting Traditional Chinese text to Simplified Chinese in Spotify Desktop. It automatically converts song titles and artist names in the bottom now-playing bar, playlist rows, and the right-hand Now Playing sidebar, including updates during track changes, scrolling, and navigation. Album links in playlist rows and lyric lines in the lyrics view and sidebar preview are also converted. Dedicated album pages also support album headings, artist links, and track titles. Full search results support song, artist, album, and playlist names. The typing preview also converts supported result names and creator subtitles. Credits, recommendation titles, and the left library sidebar are not covered yet.
+Hanziify is a Spicetify extension in development for converting Traditional Chinese text to Simplified Chinese in Spotify Desktop. It automatically converts song titles and artist names in the bottom now-playing bar, playlist rows, and the right-hand Now Playing sidebar, including updates during track changes, scrolling, and navigation. Album links in playlist rows and lyric lines in the lyrics view and sidebar preview are also converted. Dedicated album pages also support album headings, artist links, and track titles. Full search results support song, artist, album, and playlist names. The typing preview also converts supported result names and creator subtitles. The left Your Library sidebar converts playlist, album, and artist titles in list and grid layouts. Credits and recommendation titles are not covered yet.
 
 ## Build locally
 
@@ -85,3 +85,9 @@ The command returns the number of matching rows processed, including rows alread
 The playlist observer watches for added rows, replaced pages, and changes to existing text or relevant selector attributes. Changes are batched into an animation frame; unchanged text is skipped by the shared conversion cache. Only rows currently in the DOM are processed (Spotify may render some just outside the viewport).
 
 Conversion edits displayed text only, not Spotify metadata. Spotify's internal markup may change between versions; the selectors may then need updating. OpenCC performs script conversion, not translation or language detection.
+
+## Check Your Library conversion
+
+In the left Your Library sidebar, check playlist, album, and artist names containing Traditional Chinese. Switch between list and grid layouts, filter or sort the library, and scroll to load more items. Names should simplify while links and selection still work. Creator subtitles, folder names, search input, and interface labels are outside this feature's scope.
+
+Library conversion uses `.main-yourLibraryX-libraryItemContainer`, list-title IDs containing Spotify entity URIs, and grid-title links with `role="gridcell"`. These selectors come from the installed client; other Spotify versions need live verification. This changes displayed names only, not library search matching or saved metadata.
