@@ -61,6 +61,8 @@ Open an artist whose name or Popular tracks contain Traditional Chinese. Check t
 
 In Discography, try the release filters, then open See all and switch between grid and list. Release titles should simplify, including more releases loaded as you scroll. Click a release title to verify navigation. The overview shelf uses generated classes from the installed Spotify client.
 
+Check the descriptions beneath playlist cards in the artist’s Featuring section. The description text should simplify, including text in any inline links.
+
 ## Check full search-results conversion
 
 Enter a query and open the full results page. Check song titles, artist names, album titles, and playlist titles in the results and their category filters. Change the query, load more results, and navigate away and back. Links should still work; the search input, descriptions, and interface labels should stay unchanged. English names remain English.

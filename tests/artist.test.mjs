@@ -3,6 +3,28 @@ import { test } from "node:test";
 import { JSDOM } from "jsdom";
 import { startArtistConversion } from "../src/artist.ts";
 
+test("converts artist shelf playlist descriptions with inline links", t => {
+  const dom = new JSDOM(`
+    <section data-testid="artist-page">
+      <section class="main-shelf-shelf">
+        <a class="main-card-cardTitleLink" href="/playlist/1">最愛</a>
+        <div class="zCXQkk3QnULi3ECXXoUh">
+          <div class="OyzopagU_GLhvcT1lDa0">收錄 <a href="/artist/1">張學友</a> 的音樂</div>
+        </div>
+        <div class="OyzopagU_GLhvcT1lDa0">專輯資訊</div>
+      </section>
+    </section>`, { pretendToBeVisual: true });
+  const doc = dom.window.document;
+  const link = doc.querySelector('a[href="/artist/1"]');
+  const stop = startArtistConversion(doc);
+  t.after(() => { stop(); dom.window.close(); });
+
+  assert.equal(link.parentElement.textContent, '收录 张学友 的音乐');
+  assert.equal(doc.querySelector('a[href="/artist/1"]'), link);
+  assert.equal(doc.querySelector('a[href="/playlist/1"]').textContent, '最愛');
+  assert.equal(doc.querySelector('.main-shelf-shelf > .OyzopagU_GLhvcT1lDa0').textContent, '專輯資訊');
+});
+
 test("converts both artist header variants and newly revealed Popular titles only", async t => {
   const dom = new JSDOM(`
     <section data-testid="artist-page">
