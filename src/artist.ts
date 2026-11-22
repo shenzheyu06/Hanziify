@@ -10,13 +10,16 @@ const DISCOGRAPHY_TITLES = [
   '.artist-artistDiscography-cardGrid a.main-card-cardTitleLink',
   '.artist-artistDiscography-headerTitle > a',
 ];
-// Spotify uses this subtitle wrapper for playlist cards in artist shelves.
-const PLAYLIST_DESCRIPTION = '.main-shelf-shelf .zCXQkk3QnULi3ECXXoUh > .OyzopagU_GLhvcT1lDa0';
+const PLAYLIST_CARD_TEXT = [
+  '.main-shelf-shelf a.main-card-cardTitleLink[href^="/playlist/"]',
+  // Spotify uses this subtitle wrapper for playlist cards in artist shelves.
+  '.main-shelf-shelf .zCXQkk3QnULi3ECXXoUh > .OyzopagU_GLhvcT1lDa0',
+];
 
 export function startArtistConversion(doc: Document): () => void {
   return startScopedConversion(doc, {
     rootSelector: '[data-testid="artist-page"]',
-    textSelector: [ARTIST_HEADING, POPULAR_TRACK_TITLE, ...DISCOGRAPHY_TITLES, PLAYLIST_DESCRIPTION].join(","),
-    attributeFilter: ["data-testid", "class", "role"],
+    textSelector: [ARTIST_HEADING, POPULAR_TRACK_TITLE, ...DISCOGRAPHY_TITLES, ...PLAYLIST_CARD_TEXT].join(","),
+    attributeFilter: ["data-testid", "class", "role", "href"],
   });
 }
