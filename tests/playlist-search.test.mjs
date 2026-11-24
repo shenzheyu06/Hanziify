@@ -3,13 +3,17 @@ import { test } from "node:test";
 import { installPlaylistSearch } from "../src/playlist-search.ts";
 
 const playlist = "spotify:playlist:one";
-const first = { uid: "one", uri: "spotify:track:target", name: "愛情轉移" };
+const first = { uid: "one", uri: "spotify:track:target", name: "愛情轉移", artists: [{ name: "陳奕迅" }] };
 const duplicate = { ...first, uid: "two" };
 const native = { uid: "three", uri: "spotify:track:other", name: "Other title" };
+const collaboration = {
+  uid: "four", uri: "spotify:track:collaboration", name: "Collaboration",
+  artists: [{ name: "Lead Artist" }, { name: "張學友" }],
+};
 
 function setup() {
   const calls = [];
-  const rows = [first, duplicate, native];
+  const rows = [first, duplicate, native, collaboration];
   function read(options = {}) {
     calls.push(options);
     const all = options.filter ? [native] : rows;
@@ -61,6 +65,18 @@ test("uses Spotify's native list rows and updates the total for later pages", as
   assert.deepEqual(result.items, { data: [{ uid: first.uid, uri: first.uri }], offset: 0, limit: 1, totalLength: 3 });
   const next = await platform.ListPlatformAPI.getListContents(playlist, { ...options, offset: 1 });
   assert.deepEqual(next, { data: [{ uid: duplicate.uid, uri: duplicate.uri }], offset: 1, limit: 1, totalLength: 3 });
+});
+
+test("finds tracks by Simplified Chinese names for both lead and featured artists", async t => {
+  const { platform } = setup();
+  t.after(installPlaylistSearch(platform));
+  for (const [filter, expected] of [["陈奕迅", first], ["张学友", collaboration]]) {
+    const options = { filter, offset: 0, limit: 10 };
+    const legacy = await platform.PlaylistAPI.getContents(playlist, options);
+    assert.ok(legacy.items.includes(expected));
+    const modern = await platform.ListPlatformAPI.getListContents(playlist, options);
+    assert.ok(modern.data.some(row => row.uid === expected.uid));
+  }
 });
 
 test("passes other queries through and falls back to native search if extra reads fail", async t => {

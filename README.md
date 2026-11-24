@@ -108,9 +108,9 @@ Library conversion uses `.main-yourLibraryX-libraryItemContainer`, list-title ID
 
 ## Search a playlist in either Chinese script
 
-Open a playlist and type `爱情转移` into Spotify’s existing playlist search bar. A track titled `愛情轉移` should appear in the normal results. Try a match farther down a long playlist, then clear the search to restore the full list.
+Open a playlist and type `爱情转移` into Spotify’s existing playlist search bar. A track titled `愛情轉移` should appear in the normal results. Searching for `陈奕迅` should also find tracks that credit `陳奕迅` as a lead or featured artist. Try a match farther down a long playlist, then clear the search to restore the full list.
 
-Hanziify adds title matches to Spotify’s native search results. This integration uses internal Spicetify playlist APIs and may need a compatibility update after Spotify changes them.
+Hanziify adds track title and artist name matches to Spotify’s native search results. This integration uses internal Spicetify playlist APIs and may need a compatibility update after Spotify changes them.
 
 ## Future work
 

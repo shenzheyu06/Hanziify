@@ -6,7 +6,12 @@ interface ContentsOptions {
   limit?: number;
 }
 
-interface Row { uid: string; uri: string; name?: string }
+interface Row {
+  uid: string;
+  uri: string;
+  name?: string;
+  artists?: readonly { name?: string }[];
+}
 interface Contents { items: (Row | null)[]; totalLength: number; offset: number; limit: number }
 interface ListContents { data: Row[]; totalLength: number; offset: number; limit: number }
 interface Playlist { contents: Contents; metadata: { totalLength: number } }
@@ -43,9 +48,10 @@ export function installPlaylistSearch(platform: Platform): () => void {
     if (convert(query) === query) return query.toLowerCase();
   }
 
-  function titleMatches(item: Row | null, query: string) {
-    return item?.uri.startsWith("spotify:track:") && typeof item.name === "string" &&
-      convert(item.name).toLowerCase().includes(query);
+  function trackMatches(item: Row, query: string) {
+    if (!item.uri.startsWith("spotify:track:")) return false;
+    const matches = (name?: string) => typeof name === "string" && convert(name).toLowerCase().includes(query);
+    return matches(item.name) || item.artists?.some(artist => matches(artist.name)) === true;
   }
 
   async function readAll<T>(
@@ -77,7 +83,7 @@ export function installPlaylistSearch(platform: Platform): () => void {
         readContents(uri, { ...options, filter: undefined }),
       ]);
       const nativeIds = new Set(native.all.map(item => item?.uid).filter(Boolean));
-      const matches = unfiltered.all.filter(item => item && (nativeIds.delete(item.uid) || titleMatches(item, query)));
+      const matches = unfiltered.all.filter(item => item && (nativeIds.delete(item.uid) || trackMatches(item, query)));
       if (nativeIds.size) throw new Error("Native match missing from the full playlist");
       const result = page(matches, options);
       return { ...native.first, items: result.rows, offset: result.offset, limit: result.rows.length, totalLength: result.totalLength };
@@ -110,17 +116,18 @@ export function installPlaylistSearch(platform: Platform): () => void {
       try {
         const read = (range: ContentsOptions) => originalList.call(listApi, uri, metadata, range);
         const unfilteredOptions = { ...options, filter: undefined };
-        const [native, unfiltered, titles] = await Promise.all([
+        const [native, unfiltered, tracks] = await Promise.all([
           readAll(read, extractList, options),
           readAll(read, extractList, unfilteredOptions),
           readContents(uri, unfilteredOptions),
         ]);
         const nativeIds = new Set(native.all.map(item => item?.uid).filter(Boolean));
-        const titleIds = new Set<string>();
-        for (const track of titles.all) {
-          if (track?.uid && titleMatches(track, query)) titleIds.add(track.uid);
+        const matchingTrackIds = new Set<string>();
+        for (const track of tracks.all) {
+          if (track?.uid && trackMatches(track, query)) matchingTrackIds.add(track.uid);
         }
-        const matches = unfiltered.all.filter((item): item is Row => !!item && (nativeIds.delete(item.uid) || titleIds.has(item.uid)));
+        const matches = unfiltered.all.filter((item): item is Row =>
+          !!item && (nativeIds.delete(item.uid) || matchingTrackIds.has(item.uid)));
         if (nativeIds.size) throw new Error("Native match missing from the full playlist");
         const result = page(matches, options);
         return { ...native.first, items: { ...native.first.items, data: result.rows, offset: result.offset, limit: result.rows.length, totalLength: result.totalLength } };
