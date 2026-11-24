@@ -106,7 +106,12 @@ In the left Your Library sidebar, check playlist, album, and artist names contai
 
 Library conversion uses `.main-yourLibraryX-libraryItemContainer`, list-title IDs containing Spotify entity URIs, and grid-title links with `role="gridcell"`. These selectors come from the installed client; other Spotify versions need live verification. This changes displayed names only, not library search matching or saved metadata.
 
+## Search a playlist in either Chinese script
+
+Open a playlist and type `爱情转移` into Spotify’s existing playlist search bar. A track titled `愛情轉移` should appear in the normal results. Try a match farther down a long playlist, then clear the search to restore the full list.
+
+Hanziify adds title matches to Spotify’s native search results. This integration uses internal Spicetify playlist APIs and may need a compatibility update after Spotify changes them.
+
 ## Future work
 
-- Match both Traditional and Simplified Chinese in playlist search.
 - Convert the artist and track title shown above Spotify’s Windows taskbar thumbnail preview. Check whether Spicetify can update that window title.

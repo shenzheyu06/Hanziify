@@ -7,6 +7,7 @@ import { startArtistConversion } from "./artist.ts";
 import { startSearchConversion } from "./search.ts";
 import { startSearchPreviewConversion } from "./search-preview.ts";
 import { startLibraryConversion } from "./library.ts";
+import { startPlaylistSearch } from "./playlist-search.ts";
 
 startNowPlayingConversion(document);
 startNowPlayingSidebarConversion(document);
@@ -18,6 +19,7 @@ startSearchPreviewConversion(document);
 startLibraryConversion(document);
 const convertVisiblePlaylist = createPlaylistConverter(document);
 startPlaylistConversion(document, convertVisiblePlaylist);
+startPlaylistSearch(document);
 // Keep the manual command available for diagnostics, using the same cache.
 Object.assign(window, {
   Hanziify: { convertVisiblePlaylist },
