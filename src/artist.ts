@@ -30,10 +30,13 @@ const APPEARS_ON_TITLES = [
   '.main-shelf-shelf.p4Oms7ggaeACcjYs6bR3:not(:has(.Uy5TsJiNi39iCvWp83Ws)) a.main-card-cardTitleLink[href^="/album/"]',
   '.main-shelf-shelf.BNtmn81d3eXkOVoIhBmT a.main-card-cardTitleLink[href^="/album/"]',
 ];
+// Both About views use this class for the biography body.
+const BIOGRAPHY = '.eZM78YYSOCTE1FTK4tKC';
 
 export function startArtistConversion(doc: Document): () => void {
   return startScopedConversion(doc, {
-    rootSelector: '[data-testid="artist-page"]',
+    // Spotify mounts the expanded About dialog outside the artist page.
+    rootSelector: '[data-testid="artist-page"], .YH4IQI_NEKM1UEiOOfBi',
     textSelector: [
       ARTIST_HEADING,
       POPULAR_TRACK_TITLE,
@@ -41,6 +44,7 @@ export function startArtistConversion(doc: Document): () => void {
       ...PLAYLIST_CARD_TEXT,
       ...ARTIST_PICK_TEXT,
       ...APPEARS_ON_TITLES,
+      BIOGRAPHY,
     ].join(","),
     attributeFilter: ["data-testid", "class", "role", "href"],
   });

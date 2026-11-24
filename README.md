@@ -67,6 +67,8 @@ In Artist Pick, check the pinned item title and artist comment when present. Cli
 
 In Appears On, check release titles on the artist overview and in See all when Spotify shows that link. Click a title to verify that it opens the release. Both shelf layouts use generated CSS classes from the installed client.
 
+Open About and check the biography in the preview and expanded dialog. Try a biography with Chinese and English text, multiple paragraphs, and an inline link. Verify that the link still works and the dialog can be closed and reopened.
+
 ## Check full search-results conversion
 
 Enter a query and open the full results page. Check song titles, artist names, album titles, and playlist titles in the results and their category filters. Change the query, load more results, and navigate away and back. Links should still work; the search input, descriptions, and interface labels should stay unchanged. English names remain English.

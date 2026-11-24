@@ -3,6 +3,34 @@ import { test } from "node:test";
 import { JSDOM } from "jsdom";
 import { startArtistConversion } from "../src/artist.ts";
 
+test("converts the biography preview and a dialog mounted outside the artist page", async t => {
+  const dom = new JSDOM(`
+    <section data-testid="artist-page">
+      <button><div class="eZM78YYSOCTE1FTK4tKC">香港音樂人</div></button>
+    </section>`, { pretendToBeVisual: true });
+  const doc = dom.window.document;
+  const stop = startArtistConversion(doc);
+  t.after(() => { stop(); dom.window.close(); });
+  assert.equal(doc.querySelector('button').textContent, '香港音乐人');
+
+  doc.body.insertAdjacentHTML('beforeend', `
+    <div role="dialog" class="YH4IQI_NEKM1UEiOOfBi">
+      <div class="eZM78YYSOCTE1FTK4tKC">
+        <p>香港音樂人 and producer.</p>
+        <p>代表作是<a href="/album/1">測試專輯</a>。</p>
+      </div>
+      <button>關閉</button>
+    </div>`);
+  const link = doc.querySelector('[role="dialog"] a');
+  await new Promise(resolve => dom.window.requestAnimationFrame(() => dom.window.requestAnimationFrame(resolve)));
+
+  assert.deepEqual(Array.from(doc.querySelectorAll('[role="dialog"] p'), p => p.textContent), [
+    '香港音乐人 and producer.', '代表作是测试专辑。',
+  ]);
+  assert.equal(doc.querySelector('[role="dialog"] a[href="/album/1"]'), link);
+  assert.equal(doc.querySelector('[role="dialog"] button').textContent, '關閉');
+});
+
 test("converts Appears On release links on the overview and See all page", t => {
   const dom = new JSDOM(`
     <section data-testid="artist-page">
