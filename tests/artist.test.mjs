@@ -3,6 +3,28 @@ import { test } from "node:test";
 import { JSDOM } from "jsdom";
 import { startArtistConversion } from "../src/artist.ts";
 
+test("converts Appears On release links on the overview and See all page", t => {
+  const dom = new JSDOM(`
+    <section data-testid="artist-page">
+      <section class="main-shelf-shelf p4Oms7ggaeACcjYs6bR3">
+        <a class="main-card-cardTitleLink" href="/album/1">愛的合輯</a>
+        <a class="main-card-cardTitleLink" href="/artist/1">張學友</a>
+      </section>
+      <section class="main-shelf-shelf BNtmn81d3eXkOVoIhBmT">
+        <a class="main-card-cardTitleLink" href="/album/2">經典樂章</a>
+      </section>
+      <a class="main-card-cardTitleLink" href="/album/3">推薦專輯</a>
+    </section>`, { pretendToBeVisual: true });
+  const doc = dom.window.document;
+  const stop = startArtistConversion(doc);
+  t.after(() => { stop(); dom.window.close(); });
+
+  assert.equal(doc.querySelector('a[href="/album/1"]').textContent, '爱的合辑');
+  assert.equal(doc.querySelector('a[href="/album/2"]').textContent, '经典乐章');
+  assert.equal(doc.querySelector('a[href="/album/3"]').textContent, '推薦專輯');
+  assert.equal(doc.querySelector('a[href="/artist/1"]').textContent, '張學友');
+});
+
 test("converts Artist Pick text across its card layouts", t => {
   const dom = new JSDOM(`
     <section data-testid="artist-page">

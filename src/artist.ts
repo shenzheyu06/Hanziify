@@ -24,11 +24,24 @@ const ARTIST_PICK_TEXT = [
   '[data-testid="artist-pick-merch-container"] h3',
   '.Ebw_qQ3HNrQQKUcwLtIA .SwSeQNOrS9ytJQAvgTK8', // Pinned concert title.
 ];
+const APPEARS_ON_TITLES = [
+  // Appears On can have too few releases for a See all link. Identify its album
+  // cards by the overview shelf class and exclude the Discography filters.
+  '.main-shelf-shelf.p4Oms7ggaeACcjYs6bR3:not(:has(.Uy5TsJiNi39iCvWp83Ws)) a.main-card-cardTitleLink[href^="/album/"]',
+  '.main-shelf-shelf.BNtmn81d3eXkOVoIhBmT a.main-card-cardTitleLink[href^="/album/"]',
+];
 
 export function startArtistConversion(doc: Document): () => void {
   return startScopedConversion(doc, {
     rootSelector: '[data-testid="artist-page"]',
-    textSelector: [ARTIST_HEADING, POPULAR_TRACK_TITLE, ...DISCOGRAPHY_TITLES, ...PLAYLIST_CARD_TEXT, ...ARTIST_PICK_TEXT].join(","),
+    textSelector: [
+      ARTIST_HEADING,
+      POPULAR_TRACK_TITLE,
+      ...DISCOGRAPHY_TITLES,
+      ...PLAYLIST_CARD_TEXT,
+      ...ARTIST_PICK_TEXT,
+      ...APPEARS_ON_TITLES,
+    ].join(","),
     attributeFilter: ["data-testid", "class", "role", "href"],
   });
 }
