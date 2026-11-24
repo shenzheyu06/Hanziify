@@ -63,6 +63,8 @@ In Discography, try the release filters, then open See all and switch between gr
 
 Check the playlist card titles and descriptions in the artist’s Featuring section. Both should simplify, including text in any inline description links. Click a title to verify that it still opens the playlist.
 
+In Artist Pick, check the pinned item title and artist comment when present. Click the pick to verify it still opens the item. Some variants use generated CSS classes from the installed client.
+
 ## Check full search-results conversion
 
 Enter a query and open the full results page. Check song titles, artist names, album titles, and playlist titles in the results and their category filters. Change the query, load more results, and navigate away and back. Links should still work; the search input, descriptions, and interface labels should stay unchanged. English names remain English.

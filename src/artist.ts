@@ -15,11 +15,20 @@ const PLAYLIST_CARD_TEXT = [
   // Spotify uses this subtitle wrapper for playlist cards in artist shelves.
   '.main-shelf-shelf .zCXQkk3QnULi3ECXXoUh > .OyzopagU_GLhvcT1lDa0',
 ];
+const ARTIST_PICK_TEXT = [
+  '[data-testid="artist-pick-link"]',
+  // Standard and background-image cards use different comment containers.
+  '.Ebw_qQ3HNrQQKUcwLtIA .Zzj1XTVI7gvpKjebKqTK .standalone-ellipsis-one-line',
+  '[data-testid="artist-pick-with-background-container"] ._ZnH9lmh923t4tl8cMA3 .standalone-ellipsis-one-line',
+  '[data-testid="merch-artist-pick-comment"]',
+  '[data-testid="artist-pick-merch-container"] h3',
+  '.Ebw_qQ3HNrQQKUcwLtIA .SwSeQNOrS9ytJQAvgTK8', // Pinned concert title.
+];
 
 export function startArtistConversion(doc: Document): () => void {
   return startScopedConversion(doc, {
     rootSelector: '[data-testid="artist-page"]',
-    textSelector: [ARTIST_HEADING, POPULAR_TRACK_TITLE, ...DISCOGRAPHY_TITLES, ...PLAYLIST_CARD_TEXT].join(","),
+    textSelector: [ARTIST_HEADING, POPULAR_TRACK_TITLE, ...DISCOGRAPHY_TITLES, ...PLAYLIST_CARD_TEXT, ...ARTIST_PICK_TEXT].join(","),
     attributeFilter: ["data-testid", "class", "role", "href"],
   });
 }

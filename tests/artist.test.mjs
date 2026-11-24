@@ -3,6 +3,37 @@ import { test } from "node:test";
 import { JSDOM } from "jsdom";
 import { startArtistConversion } from "../src/artist.ts";
 
+test("converts Artist Pick text across its card layouts", t => {
+  const dom = new JSDOM(`
+    <section data-testid="artist-page">
+      <div class="Ebw_qQ3HNrQQKUcwLtIA">
+        <div class="Zzj1XTVI7gvpKjebKqTK"><span class="standalone-ellipsis-one-line" id="comment">我的最愛</span></div>
+        <a data-testid="artist-pick-link" href="/track/1">愛情轉移</a>
+        <section data-testid="artist-pick-with-background-container">
+          <section class="_ZnH9lmh923t4tl8cMA3"><span class="standalone-ellipsis-one-line" id="background-comment">請聽這首</span></section>
+        </section>
+        <div data-testid="artist-pick-merch-container">
+          <span data-testid="merch-artist-pick-comment">限量發售</span><h3>紀念專輯</h3>
+        </div>
+        <p class="SwSeQNOrS9ytJQAvgTK8" id="concert">演唱會</p>
+      </div>
+      <p class="SwSeQNOrS9ytJQAvgTK8" id="other-concert">其他演唱會</p>
+    </section>`, { pretendToBeVisual: true });
+  const doc = dom.window.document;
+  const title = doc.querySelector('a');
+  const stop = startArtistConversion(doc);
+  t.after(() => { stop(); dom.window.close(); });
+
+  assert.equal(doc.querySelector('a[href="/track/1"]'), title);
+  assert.equal(title.textContent, '爱情转移');
+  assert.equal(doc.querySelector('#comment').textContent, '我的最爱');
+  assert.equal(doc.querySelector('#background-comment').textContent, '请听这首');
+  assert.equal(doc.querySelector('[data-testid="merch-artist-pick-comment"]').textContent, '限量发售');
+  assert.equal(doc.querySelector('h3').textContent, '纪念专辑');
+  assert.equal(doc.querySelector('#concert').textContent, '演唱会');
+  assert.equal(doc.querySelector('#other-concert').textContent, '其他演唱會');
+});
+
 test("converts artist shelf playlist titles and descriptions with inline links", t => {
   const dom = new JSDOM(`
     <section data-testid="artist-page">
