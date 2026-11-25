@@ -17,6 +17,12 @@ The build creates `dist/hanziify.js`.
 
 ## Load in Spotify on Windows
 
+For the installer, install Spotify Desktop from Spotify’s website, sign in, and leave it open for about a minute on a fresh install. Then double-click `HanziifySetup.exe`. Setup uses WinGet to install Spicetify if needed and installs the bundled Hanziify extension. The taskbar watcher is a separate option below.
+
+To build the installer locally on Windows, run `npm ci` and `npm run build:installer`. The executable is written to `dist/HanziifySetup.exe`.
+
+### Manual install
+
 Set up [Spicetify](https://spicetify.app/docs/getting-started) for Spotify Desktop, then run:
 
 ```powershell
